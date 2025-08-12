@@ -1,9 +1,12 @@
 [project]
-name = "template"
+name = "horizon_orchestrator"
 version = "0.1.0"
 description = ""
 authors = [
     {name = "Nikita Savvin", email = "nikita.vsav@gmail.com"},
+    {name = "Dmitry Vasenin", email = "vasenindmitrij01@gmail.com"},
+    {name = "Anastasia Shahova", email = "anastasia.shakhova1@gmail.com"},
+    {name = "Nikita Ryzhenkov", email = "nikitar2025@mail.ru"},
 ]
 dependencies = [
     "pytest>=8.1.1",
@@ -20,7 +23,7 @@ dependencies = [
     "environs>=14.3.0",
     "ruff>=0.12.7",
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.12"
 readme = "README.md"
 license = {text = "MIT"}
 

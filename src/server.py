@@ -12,11 +12,14 @@ from src.core.token import token_validator
 
 logger = logging.getLogger(__name__)
 
+API_PREFIX = "/horizon_orchestrator"
+
 app = FastAPI(
-    docs_url="/template_fast_api/v1/",
-    openapi_url='/template_fast_api/v1/openapi.json',
+    docs_url="/docs",
+    openapi_url="/openapi.json",
+    root_path=API_PREFIX,
     dependencies=[Depends(token_validator)] if settings.VERIFY_TOKEN else []
-    )
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -38,8 +41,9 @@ def read_root():
 if __name__ == "__main__":
     try:
         logger.info(f"Starting server on http://{settings.HOST}:{settings.PORT}")
+        print(f'🚀 Документация http://0.0.0.0:{settings.PORT}{API_PREFIX}/docs')
         uvicorn.run(
-            "server:app",
+            "src.server:app",
             host=settings.HOST,
             port=settings.PORT,
             workers=4,
