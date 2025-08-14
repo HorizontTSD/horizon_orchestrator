@@ -9,7 +9,7 @@ COPY pyproject.toml .
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     gfortran \
-    libatlas-base-dev \
+    libblas-dev \
     liblapack-dev \
     gcc \
     g++ \
