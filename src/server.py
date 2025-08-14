@@ -38,6 +38,7 @@ def read_root():
     return {"message": "Welcome to the indicators System API"}
 
 
+
 if __name__ == "__main__":
     try:
         logger.info(f"Starting server on http://{settings.HOST}:{settings.PORT}")
