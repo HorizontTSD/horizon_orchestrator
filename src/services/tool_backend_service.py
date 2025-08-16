@@ -50,7 +50,8 @@ async def proxy_generate_forecast(
         forecast_horizon_time: str
 ) -> dict:
 
-    url = f"{BASE_URL}/api/v1/predict-xgboost"
+    url = f"{BASE_URL}/api/v1/predict-xgboost/"
+
     df_records = df.to_dict(orient='records')
 
     payload = {
