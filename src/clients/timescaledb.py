@@ -7,9 +7,9 @@ env.read_env()
 
 def get_db_connection():
     return psycopg2.connect(
-        dbname=env.str("PG_DB"),
-        user=env.str("PG_USER"),
-        password=env.str("PG_PASSWORD"),
-        host=env.str("PG_HOST"),
-        port=env.str("PG_PORT"),
+        dbname=env.str("TS_DB"),
+        user=env.str("TS_USER"),
+        password=env.str("TS_PASSWORD"),
+        host=env.str("TS_HOST"),
+        port=env.str("TS_PORT"),
     )
