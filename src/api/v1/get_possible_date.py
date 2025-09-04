@@ -1,10 +1,11 @@
 import os
 import pandas as pd
-from fastapi import APIRouter, Body, HTTPException
+from fastapi import APIRouter, Body, HTTPException, Depends
 from src.core.logger import logger
 from typing import Annotated
 from src.schemas import ConvertRequest
 from src.services.tool_backend_service import proxi_generate_possible_date
+from src.auth_proxi.check_token import access_token_validator
 
 home_path = os.getcwd()
 
@@ -23,7 +24,9 @@ async def func_generate_possible_date(body: Annotated[
         example={
             "df": example_df_json_short,
             "time_column": "time"
-        })]):
+        })],
+        _=Depends(access_token_validator)
+):
 
     """
     Генерирует возможный диапазон дат и времени для пользовательского прогноза для фронта на основе временного столбца DataFrame.

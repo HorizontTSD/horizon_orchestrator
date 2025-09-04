@@ -1,8 +1,9 @@
 # src/api/v1/greeting.py
 from typing import Annotated
-from fastapi import APIRouter, Body, HTTPException
+from fastapi import APIRouter, Body, HTTPException, Depends
 from src.schemas import ForecastData
 from src.services.data_fetcher_service import data_fetcher
+from src.auth_proxi.check_token import access_token_validator
 from src.core.logger import logger
 
 router = APIRouter()
@@ -13,7 +14,9 @@ async def func_get_forecast_data(body: Annotated[
     ForecastData, Body(
         example={
             "sensor_ids": ["arithmetic_1464947681"]
-        })]):
+        })],
+    _=Depends(access_token_validator)
+):
     """
     Возвращает данные о датчиках в структурированном формате.
 

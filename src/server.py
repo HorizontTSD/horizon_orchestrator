@@ -1,43 +1,65 @@
 # src/server.py
-import logging
-
-# import pandas as pd
+import multiprocessing
 import uvicorn
-from fastapi import Depends, FastAPI
+from dotenv import load_dotenv
+from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
+from fastapi.security import HTTPBearer
 
-from src.api import api_router
 from src.core.configuration.config import settings
-from src.core.token import token_validator
+from src.core.logger import logger
+from src.api.api_routers import api_router
 
-logger = logging.getLogger(__name__)
+API_PREFIX = "/" + settings.SERVICE_NAME
 
-API_PREFIX = "/horizon_orchestrator"
+load_dotenv()
 
+logger.info("Starting microservice main forecast")
+
+origins = ["http://localhost", "http://77.37.136.11"] if settings.PUBLIC_OR_LOCAL == "LOCAL" else ["http://77.37.136.11"]
+
+
+workers = multiprocessing.cpu_count()
+logger.info(f"[WORKERS] Count workers = {workers}")
+
+security = HTTPBearer()
+
+docs_url = "/docs"
 app = FastAPI(
-    docs_url="/docs",
+    docs_url=docs_url,
     openapi_url="/openapi.json",
-    root_path=API_PREFIX,
-    dependencies=[Depends(token_validator)] if settings.VERIFY_TOKEN else []
+    root_path=API_PREFIX
 )
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    logger.warning(f"Validation error: {exc.errors()} on {request.url}")
+    return JSONResponse(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        content={
+            "detail": exc.errors(),
+            "body": exc.body,
+            "message": "Ошибка валидации входных данных. Проверьте формат запроса."
+        },
+    )
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.get_origins_urls(),
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-app.include_router(
-    api_router, prefix='/api'
-)
+
+app.include_router(api_router, prefix="/api/v1")
 
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to the indicators System API"}
-
-
+    logger.info("Root endpoint accessed.")
+    return {"message": "Welcome to the Horizon System API"}
 
 if __name__ == "__main__":
     try:
@@ -48,7 +70,7 @@ if __name__ == "__main__":
             host=settings.HOST,
             port=settings.PORT,
             workers=4,
-            log_level="debug",
+            # log_level="debug",
         )
     except Exception as e:
         logger.error(f"Failed to start server: {e}")

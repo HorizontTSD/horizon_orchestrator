@@ -1,10 +1,12 @@
 # src/api/v1/greeting.py
-from fastapi import APIRouter, Body, HTTPException
+from fastapi import APIRouter, Body, HTTPException, Depends
 from src.core.logger import logger
 from src.schemas import AlertConfigRequest
 from src.services.alert_service import proxy_create_alert
 from typing import Annotated
 from datetime import date
+from src.auth_proxi.check_token import access_token_validator
+
 
 
 router = APIRouter()
@@ -39,7 +41,9 @@ async def create_alert(body: Annotated[
     Body(
         example=alert_example
     ),
-]):
+
+    ],
+    _=Depends(access_token_validator)):
     """
     Создает YAML-конфигурацию для Alert Manager с параметром предварительного предупреждения.
 

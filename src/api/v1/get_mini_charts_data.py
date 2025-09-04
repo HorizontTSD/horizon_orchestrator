@@ -1,12 +1,16 @@
 # src/api/v1/greeting.py
-from fastapi import APIRouter, Body, HTTPException
+from fastapi import APIRouter, Body, HTTPException, Depends
 from src.core.logger import logger
 from src.services.mini_charts_data_fetcher_service import mini_charts_data
+from src.auth_proxi.check_token import access_token_validator
+
 
 router = APIRouter()
 
 @router.get("/get_mini_charts_data")
-async def func_get_mini_charts_data():
+async def func_get_mini_charts_data(
+        _=Depends(access_token_validator)
+):
     """
     Возвращает данные для дополнительных мини-графиков.
 
