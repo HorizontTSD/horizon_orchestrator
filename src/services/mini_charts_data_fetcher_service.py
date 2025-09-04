@@ -58,7 +58,7 @@ async def mini_charts_data():
     mark_random_humidity = random.choice(["negative", "positive"])
     mark_random_pressure = random.choice(["negative", "positive"])
 
-    length = 288
+    length = 32
 
     data_temp = generate_random(length=length, value_range=random_values_temp)
     data_wind_speed = generate_random(length=length, value_range=random_values_wind_speed)
