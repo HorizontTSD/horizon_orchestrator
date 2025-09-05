@@ -4,8 +4,8 @@ from src.core.logger import logger
 from src.services.accuracy_by_period_service import fetch_possible_date_for_metrix
 from src.schemas import PossibleData
 from typing import Annotated
-from src.auth_proxi.check_token import access_token_validator
-
+from src.security.check_token import access_token_validator
+from src.security.permissions import check_permission
 
 
 router = APIRouter()
@@ -16,7 +16,7 @@ async def func_fetch_possible_date_for_metrix(body: Annotated[
         example={
             "sensor_ids": ["arithmetic_1464947681"]
         })],
-        _=Depends(access_token_validator)
+        user_info=Depends(access_token_validator)
 ):
 
     """
@@ -47,6 +47,7 @@ async def func_fetch_possible_date_for_metrix(body: Annotated[
     - Может возникнуть исключение, если соединение с базой данных не удастся.
     """
 
+    check_permission(user_info=user_info, permission="dashboard.view")
 
     try:
         sensor_ids = body.sensor_ids

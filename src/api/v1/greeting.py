@@ -5,7 +5,7 @@ from fastapi import APIRouter, Body, HTTPException, Depends
 
 from src.schemas import HellowRequest
 from src.services.greeting_service import greet_users  # Импортируем из сервисного слоя
-from src.auth_proxi.check_token import access_token_validator
+from src.security.check_token import access_token_validator
 
 router = APIRouter()
 

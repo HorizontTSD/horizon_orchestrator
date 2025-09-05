@@ -3,8 +3,10 @@ from typing import Annotated
 from fastapi import APIRouter, Body, HTTPException, Depends
 from src.schemas import ForecastData
 from src.services.data_fetcher_service import data_fetcher
-from src.auth_proxi.check_token import access_token_validator
+from src.security.check_token import access_token_validator
 from src.core.logger import logger
+from src.security.permissions import check_permission
+
 
 router = APIRouter()
 
@@ -15,7 +17,7 @@ async def func_get_forecast_data(body: Annotated[
         example={
             "sensor_ids": ["arithmetic_1464947681"]
         })],
-    _=Depends(access_token_validator)
+        user_info=Depends(access_token_validator)
 ):
     """
     Возвращает данные о датчиках в структурированном формате.
@@ -81,6 +83,7 @@ async def func_get_forecast_data(body: Annotated[
                     - "en" — английский текст подписи.
                     - "ru" — русский текст подписи.
     """
+    check_permission(user_info=user_info, permission="dashboard.view")
 
     try:
         sensor_ids = body.sensor_ids

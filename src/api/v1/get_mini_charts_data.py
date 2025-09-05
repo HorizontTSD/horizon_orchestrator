@@ -1,16 +1,17 @@
 # src/api/v1/greeting.py
-from fastapi import APIRouter, Body, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends
 from src.core.logger import logger
 from src.services.mini_charts_data_fetcher_service import mini_charts_data
-from src.auth_proxi.check_token import access_token_validator
+from src.security.check_token import access_token_validator
+from src.security.permissions import check_permission
+from src.security.permissions import check_permission
 
 
 router = APIRouter()
 
+
 @router.get("/get_mini_charts_data")
-async def func_get_mini_charts_data(
-        _=Depends(access_token_validator)
-):
+async def func_get_mini_charts_data(user_info = Depends(access_token_validator)):
     """
     Возвращает данные для дополнительных мини-графиков.
 
@@ -39,6 +40,8 @@ async def func_get_mini_charts_data(
 
     5. **data** (list/dict) — данные для построения мини-графика.
     """
+
+    check_permission(user_info=user_info, permission="dashboard.view")
 
     try:
         response = await mini_charts_data()

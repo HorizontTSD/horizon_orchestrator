@@ -4,8 +4,8 @@ from src.core.logger import logger
 from src.services.accuracy_by_period_service import calc_accuracy_by_period
 from src.schemas import MetrixByPeriod
 from typing import Annotated
-from src.auth_proxi.check_token import access_token_validator
-
+from src.security.check_token import access_token_validator
+from src.security.permissions import check_permission
 
 
 router = APIRouter()
@@ -18,7 +18,7 @@ async def func_metrix_by_period(body: Annotated[
             "date_start": "2025-07-12 10:37:00",
             "date_end": "2025-07-13 10:32:00"
         })],
-        _=Depends(access_token_validator)
+        user_info=Depends(access_token_validator)
 ):
     """
     Вычисляет метрики точности прогноза за указанный период времени.
@@ -30,6 +30,8 @@ async def func_metrix_by_period(body: Annotated[
     Возвращает словарь с рассчитанными метриками (MAE, RMSE, MAPE и др.) для каждого сенсора.
     Используется для оценки качества предсказаний модели и анализа её производительности.
     """
+
+    check_permission(user_info=user_info, permission="dashboard.view")
 
     try:
         sensor_ids = body.sensor_ids

@@ -4,7 +4,7 @@ from src.schemas import (
     RegisterUserRequest, RegisterUserResponse,
     RolesResponse, PermissionsResponse, GetUsersByOrgResponse
 )
-from src.auth_proxi.check_token import access_token_validator
+from src.security.check_token import access_token_validator
 
 import httpx
 

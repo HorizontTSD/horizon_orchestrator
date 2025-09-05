@@ -1,8 +1,8 @@
 # src/api/v1/greeting.py
 from fastapi import APIRouter, Body, HTTPException, Depends
 from src.services.alert_service import proxy_notification_delete
-from src.auth_proxi.check_token import access_token_validator
-
+from src.security.check_token import access_token_validator
+from src.security.permissions import check_permission
 
 
 router = APIRouter()
@@ -13,7 +13,7 @@ async def delete_alert(
         body: dict = Body(
             example={"filename": "alert_config_123456.yaml"}
         ),
-        _=Depends(access_token_validator)
+        user_info=Depends(access_token_validator)
 ):
     """
     Асинхронная функция для удаления YAML-конфигурации оповещения.
@@ -39,6 +39,8 @@ async def delete_alert(
     print(response)  # "Файл alert_config.yaml успешно удален."
     ```
     """
+    check_permission(user_info=user_info, permission="notification.delete")
+
     try:
         result = await proxy_notification_delete(body)
         return result

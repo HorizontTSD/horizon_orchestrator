@@ -5,7 +5,8 @@ from src.core.logger import logger
 from typing import Annotated
 from src.schemas import PredictRequest
 from src.services.tool_backend_service import proxy_generate_forecast
-from src.auth_proxi.check_token import access_token_validator
+from src.security.check_token import access_token_validator
+from src.security.permissions import check_permission
 
 
 home_path = os.getcwd()
@@ -28,7 +29,7 @@ async def func_generate_forecast(body: Annotated[
             "col_target": "load_consumption",
             "forecast_horizon_time": "2022-09-10 05:55:00"
         })],
-        _=Depends(access_token_validator)
+        user_info=Depends(access_token_validator)
 ):
 
     """
@@ -114,6 +115,7 @@ async def func_generate_forecast(body: Annotated[
     response = func_generate_forecast(df, time_column, col_target, forecast_horizon_time)
     ```
     """
+    check_permission(user_info=user_info, permission="forecast.quick.create")
 
     try:
         json_df = body.df

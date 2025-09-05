@@ -5,8 +5,8 @@ from src.schemas import AlertConfigRequest
 from src.services.alert_service import proxy_create_alert
 from typing import Annotated
 from datetime import date
-from src.auth_proxi.check_token import access_token_validator
-
+from src.security.check_token import access_token_validator
+from src.security.permissions import check_permission
 
 
 router = APIRouter()
@@ -40,10 +40,9 @@ async def create_alert(body: Annotated[
     AlertConfigRequest,
     Body(
         example=alert_example
-    ),
-
-    ],
-    _=Depends(access_token_validator)):
+    )],
+    user_info=Depends(access_token_validator)
+):
     """
     Создает YAML-конфигурацию для Alert Manager с параметром предварительного предупреждения.
 
@@ -100,6 +99,8 @@ async def create_alert(body: Annotated[
     print(response.json())
     ```
     """
+    check_permission(user_info=user_info, permission="notification.create")
+
     try:
         payload = body.dict()
         return await proxy_create_alert(payload)

@@ -1,14 +1,15 @@
 # src/api/v1/greeting.py
-from fastapi import APIRouter, Body, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends
 from src.core.logger import logger
 from src.services.sensor_list_fetcher_service import get_sensor_list
-from src.auth_proxi.check_token import access_token_validator
+from src.security.check_token import access_token_validator
+from src.security.permissions import check_permission
 
 
 router = APIRouter()
 
 @router.get("/get_sensor_id_list")
-async def func_get_sensor_id_list(_=Depends(access_token_validator)):
+async def func_get_sensor_id_list(user_info=Depends(access_token_validator)):
     """
     Возвращает список доступных датчиков.
 
@@ -21,6 +22,8 @@ async def func_get_sensor_id_list(_=Depends(access_token_validator)):
 
     Каждый элемент списка — это строка с идентификатором доступного датчика.
     """
+    check_permission(user_info=user_info, permission="dashboard.view")
+
     try:
         response = await get_sensor_list()
         return response

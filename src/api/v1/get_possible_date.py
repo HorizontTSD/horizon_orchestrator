@@ -5,7 +5,9 @@ from src.core.logger import logger
 from typing import Annotated
 from src.schemas import ConvertRequest
 from src.services.tool_backend_service import proxi_generate_possible_date
-from src.auth_proxi.check_token import access_token_validator
+from src.security.check_token import access_token_validator
+from src.security.permissions import check_permission
+
 
 home_path = os.getcwd()
 
@@ -25,7 +27,7 @@ async def func_generate_possible_date(body: Annotated[
             "df": example_df_json_short,
             "time_column": "time"
         })],
-        _=Depends(access_token_validator)
+        user_info=Depends(access_token_validator)
 ):
 
     """
@@ -92,6 +94,8 @@ async def func_generate_possible_date(body: Annotated[
     print(response)
     ```
     """
+    check_permission(user_info=user_info, permission="forecast.quick.create")
+
     try:
         json_df = body.df
         df = pd.DataFrame(json_df)

@@ -1,14 +1,15 @@
 # src/api/v1/greeting.py
-from fastapi import APIRouter, Body, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends
 from src.services.alert_service import notification_list
-from src.auth_proxi.check_token import access_token_validator
+from src.security.check_token import access_token_validator
+from src.security.permissions import check_permission
 
 
 router = APIRouter()
 
 
 @router.get("/notification_list")
-async def notifications_list(_=Depends(access_token_validator)):
+async def notifications_list(user_info=Depends(access_token_validator)):
     """
     Асинхронная функция для получения списка YAML-файлов и их содержимого.
 
@@ -34,7 +35,10 @@ async def notifications_list(_=Depends(access_token_validator)):
     **Дополнительно:**
     - Данные из каждого YAML-файла загружаются с помощью `yaml.safe_load()`.
     - В результат добавляется поле `"file_name"`, содержащее имя файла.
+
     """
+    check_permission(user_info=user_info, permission="notification.view")
+
     try:
         result = await notification_list()
         return result

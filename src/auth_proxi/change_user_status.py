@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends, Body, status, Request
 from src.schemas import UserStatusChangeResponse, UserStatusChangeRequest
-from src.auth_proxi.check_token import access_token_validator
+from src.security.check_token import access_token_validator
 from environs import Env
 import httpx
 
