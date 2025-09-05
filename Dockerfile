@@ -14,6 +14,4 @@ RUN pip install zstandard
 RUN pip install pdm
 RUN pdm install --prod --frozen-lockfile --no-editable
 
-EXPOSE 7070
-
 ENTRYPOINT ["pdm", "run", "src/server.py"]
