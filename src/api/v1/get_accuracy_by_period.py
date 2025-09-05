@@ -1,9 +1,11 @@
 # src/api/v1/greeting.py
-from fastapi import APIRouter, Body, HTTPException
+from fastapi import APIRouter, Body, HTTPException, Depends
 from src.core.logger import logger
 from src.services.accuracy_by_period_service import calc_accuracy_by_period
 from src.schemas import MetrixByPeriod
 from typing import Annotated
+from src.auth_proxi.check_token import access_token_validator
+
 
 
 router = APIRouter()
@@ -15,7 +17,9 @@ async def func_metrix_by_period(body: Annotated[
             "sensor_ids": ["arithmetic_1464947681"],
             "date_start": "2025-07-12 10:37:00",
             "date_end": "2025-07-13 10:32:00"
-        })]):
+        })],
+        _=Depends(access_token_validator)
+):
     """
     Вычисляет метрики точности прогноза за указанный период времени.
 

@@ -1,9 +1,11 @@
 # src/api/v1/greeting.py
-from fastapi import APIRouter, Body, HTTPException
+from fastapi import APIRouter, Body, HTTPException, Depends
 from src.core.logger import logger
 from src.services.accuracy_by_period_service import fetch_possible_date_for_metrix
 from src.schemas import PossibleData
 from typing import Annotated
+from src.auth_proxi.check_token import access_token_validator
+
 
 
 router = APIRouter()
@@ -13,7 +15,9 @@ async def func_fetch_possible_date_for_metrix(body: Annotated[
     PossibleData, Body(
         example={
             "sensor_ids": ["arithmetic_1464947681"]
-        })]):
+        })],
+        _=Depends(access_token_validator)
+):
 
     """
     Асинхронная функция для получения возможных дат для метрик для каждого сенсора.

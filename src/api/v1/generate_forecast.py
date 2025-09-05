@@ -1,10 +1,12 @@
 import os
 import pandas as pd
-from fastapi import APIRouter, Body, HTTPException
+from fastapi import APIRouter, Body, HTTPException, Depends
 from src.core.logger import logger
 from typing import Annotated
 from src.schemas import PredictRequest
 from src.services.tool_backend_service import proxy_generate_forecast
+from src.auth_proxi.check_token import access_token_validator
+
 
 home_path = os.getcwd()
 
@@ -25,7 +27,9 @@ async def func_generate_forecast(body: Annotated[
             "time_column": "time",
             "col_target": "load_consumption",
             "forecast_horizon_time": "2022-09-10 05:55:00"
-        })]):
+        })],
+        _=Depends(access_token_validator)
+):
 
     """
     Генерирует прогноз временного ряда на основе исторических данных.

@@ -1,12 +1,11 @@
 # src/api/v1/greeting.py
 from typing import Annotated
 
-from fastapi import APIRouter, Body, HTTPException
+from fastapi import APIRouter, Body, HTTPException, Depends
 
 from src.schemas import HellowRequest
 from src.services.greeting_service import greet_users  # Импортируем из сервисного слоя
-
-# from src.core.logger import logger
+from src.auth_proxi.check_token import access_token_validator
 
 router = APIRouter()
 
@@ -15,7 +14,8 @@ async def inputation(
     body: Annotated[
         HellowRequest,
         Body(example={"names": ["Sasha", "Nikita", "Kristina"]}),
-    ]
+    ],
+    _=Depends(access_token_validator)
 ):
     try:
         names = body.names
