@@ -70,7 +70,6 @@ if __name__ == "__main__":
             host=settings.HOST,
             port=settings.PORT,
             workers=4,
-            # log_level="debug",
         )
     except Exception as e:
         logger.error(f"Failed to start server: {e}")
