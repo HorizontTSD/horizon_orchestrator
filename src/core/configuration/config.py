@@ -13,7 +13,7 @@ class Settings:
         self.SERVICE_NAME = env.str("SERVICE_NAME", "db_template")
 
         self.HOST = env.str("HOST", '0.0.0.0')
-        self.PORT = env.int('PORT', 7072)
+        self.PORT = env.int('PORT', 7070)
 
         self.TOKENS_LIST = env.str('TOKENS_LIST')
         self.VERIFY_TOKEN = env.bool('VERIFY_TOKEN', False)
