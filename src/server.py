@@ -1,4 +1,3 @@
-# src/server.py
 import multiprocessing
 import uvicorn
 from dotenv import load_dotenv
@@ -52,7 +51,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 app.include_router(api_router, prefix="/api/v1")
 
