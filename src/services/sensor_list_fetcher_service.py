@@ -1,5 +1,7 @@
 
-async def get_sensor_list():
+
+
+async def get_sensor_list_by_org(org_id):
     """
     Возвращает список настроенных датчиков для конкретной организации.
 
@@ -20,5 +22,6 @@ async def get_sensor_list():
     Возвращает:
         list[str]: Список идентификаторов датчиков, доступных для текущей организации.
     """
+
     response = ['arithmetic_1464947681', 'arithmetic_1464947681_2']
     return response
