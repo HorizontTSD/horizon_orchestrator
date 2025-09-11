@@ -15,6 +15,9 @@ from src.auth_proxi.register_org import router as register_org_and_superuser
 from src.auth_proxi.register_user import router as register_user_router
 from src.auth_proxi.change_user_status import router as change_user_status
 
+from src.schedule_forecast_proxi.forecast_config_area import router as proxy_get_forecast_configs
+
+
 
 api_router = APIRouter()
 
@@ -36,3 +39,6 @@ api_router.include_router(delete_alert, tags=["Notifications Area"])
 
 api_router.include_router(func_generate_forecast, tags=["Generate Forecast Area"])
 api_router.include_router(func_generate_possible_date, tags=["Generate Forecast Area"])
+
+api_router.include_router(proxy_get_forecast_configs, tags=["Schedule Forecast Area"])
+

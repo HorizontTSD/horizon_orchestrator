@@ -176,3 +176,6 @@ class UserStatusChangeRequest(BaseModel):
     """
     login_to_change: str
 
+
+class DataNameListResponse(BaseModel):
+    data_names: list[str]

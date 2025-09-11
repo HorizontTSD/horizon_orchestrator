@@ -4,7 +4,6 @@ from src.core.logger import logger
 from src.services.mini_charts_data_fetcher_service import mini_charts_data
 from src.security.check_token import access_token_validator
 from src.security.permissions import check_permission
-from src.security.permissions import check_permission
 
 
 router = APIRouter()
