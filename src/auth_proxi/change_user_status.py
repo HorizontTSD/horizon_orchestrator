@@ -3,6 +3,7 @@ from src.schemas import UserStatusChangeResponse, UserStatusChangeRequest
 from src.security.check_token import access_token_validator
 from environs import Env
 import httpx
+import json
 
 env = Env()
 env.read_env()
@@ -126,10 +127,11 @@ async def proxy_delete_user(
 
     async with httpx.AsyncClient() as client:
         try:
-            response = await client.delete(
+            response = await client.request(
+                "DELETE",
                 f"{auth_service_url}/api/v1/change_user_status/delete",
-                json=payload.dict(),
-                headers=headers
+                data=json.dumps(payload.dict()),
+                headers={**headers, "Content-Type": "application/json"}
             )
             if response.status_code != 200:
                 try:
