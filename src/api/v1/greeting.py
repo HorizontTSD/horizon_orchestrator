@@ -3,7 +3,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Body, HTTPException
 
-from src.models import HellowRequest
+from src.model import HellowRequest
 from src.services.greeting_service import greet_users  # Импортируем из сервисного слоя
 
 # from src.core.logger import logger

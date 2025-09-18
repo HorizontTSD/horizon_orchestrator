@@ -18,15 +18,16 @@ class Settings:
         self.TOKENS_LIST = env.str('TOKENS_LIST')
         self.VERIFY_TOKEN = env.bool('VERIFY_TOKEN', False)
 
+        self.SET_SCHEDULE_FORECAST_HORIZON_URL = env.str(
+            "SET_SCHEDULE_FORECAST_HORIZON_URL",
+            "http://77.37.136.11:8084/" 
+        )
+
 
     def get_origins_urls(self):
         if self.PUBLIC_OR_LOCAL == 'PUBLIC':
-            return 'http://11.11.11.11'
-
-
-        return 'http://localhost'
-    
-
+            return ['http://11.11.11.11']
+        return ['http://localhost']   
 
 
 
