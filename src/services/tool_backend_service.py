@@ -12,7 +12,7 @@ BACKEND_TOKEN = env.str("BACKEND_TOKEN")
 
 
 async def proxi_generate_possible_date(df: pd.DataFrame, time_column: str) -> dict:
-    url = f"{BASE_URL}/api/v1/possible-date/"
+    url = f"{BASE_URL}/api/v1/possible-date"
     df_records = df.to_dict(orient='records')
 
     payload = {
