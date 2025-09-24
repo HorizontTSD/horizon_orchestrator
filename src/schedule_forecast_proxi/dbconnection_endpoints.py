@@ -17,17 +17,27 @@ schedule_forecast_url = url + "/schedule_forecast/api/v1"
 router = APIRouter(prefix="/db_connection")
 
 
+@router.get("/connections_methods", summary="Get connections methods")
+async def get_connections_methods(
+        _=Depends(access_token_validator)
+):
+    response = {
+        "connections_methods": ["PostgreSQL"]
+    }
+    return response
+
+
 @router.post("/create", response_model=CreateDBConnectionResponse, summary="Get organization's users")
 async def proxy_create_dbconnection(
         payload: CreateDBConnectionRequest = Body(..., example={
             "connection_schema": "PostgreSQL",
             "connection_name": "Тестовое соеденение",
-            "db_name": "my_database",
-            "host": "localhost",
-            "port": 5432,
-            "ssl": True,
-            "db_user": "postgres",
-            "db_password": "password123"
+            "db_name": "ats_db",
+            "host": "77.37.136.11",
+            "port": 8501,
+            "ssl": False,
+            "db_user": "ats_user",
+            "db_password": "Ats1320!"
         }),
         request: Request = None,
         _=Depends(access_token_validator)
