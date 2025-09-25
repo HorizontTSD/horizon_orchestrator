@@ -355,7 +355,6 @@ class ForecastMethodsResponse(BaseModel):
 
 class FetchSampleDataRequest(BaseModel):
     connection_id: int
-    data_name: str
     source_table: str
     time_column: str
     target_column: str

@@ -41,7 +41,6 @@ async def proxy_get_forecast_methods_list(request: Request, _=Depends(access_tok
 )
 async def proxy_fetch_sample_and_discreteness(
         connection_id: int = Query(..., example=4),
-        data_name: str = Query(..., example="Тестовое"),
         source_table: str = Query(..., example="electrical_consumption_amurskaya_obl"),
         time_column: str = Query(..., example="datetime"),
         target_column: str = Query(..., example="vc_fact"),
@@ -60,7 +59,6 @@ async def proxy_fetch_sample_and_discreteness(
     headers = {"authorization": request.headers["authorization"]}
     payload = FetchSampleDataRequest(
         connection_id=connection_id,
-        data_name=data_name,
         source_table=source_table,
         time_column=time_column,
         target_column=target_column,
