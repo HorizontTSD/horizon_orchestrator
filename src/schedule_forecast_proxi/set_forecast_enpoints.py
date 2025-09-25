@@ -96,7 +96,7 @@ async def proxy_create_forecast_config(
         payload: ForecastConfigRequest = Body(
             ...,
             example={
-                "connection_id": 3,
+                "connection_id": 4,
                 "data_name": "Тестовое",
                 "source_table": "electrical_consumption_amurskaya_obl",
                 "time_column": "datetime",
