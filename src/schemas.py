@@ -368,3 +368,20 @@ class GenerateDateResponse(RootModel):
 
 class ForecastMethodsResponse(BaseModel):
     methods: list[str]
+
+
+class FetchSampleDataRequest(BaseModel):
+    connection_id: int
+    data_name: str
+    source_table: str
+    time_column: str
+    target_column: str
+
+
+class FetchSampleResponse(BaseModel):
+    sample_data: List[Dict]
+    discreteness: int
+
+
+class TimeIntervalsResponse(BaseModel):
+    time_intervals: List[str]

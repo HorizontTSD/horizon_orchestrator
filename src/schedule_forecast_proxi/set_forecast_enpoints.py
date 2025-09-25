@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException, Body, Path, Request, Depends, Query
 from src.schemas import (
     ForecastConfigRequest, ForecastConfigResponse,
-    ScheduleForecastingResponse, DeleteForecastResponse
+    ScheduleForecastingResponse, DeleteForecastResponse, FetchSampleResponse,
+    FetchSampleDataRequest, TimeIntervalsResponse
 )
 from src.security.check_token import access_token_validator
 from environs import Env
@@ -33,9 +34,83 @@ async def proxy_get_forecast_methods_list(request: Request, _=Depends(access_tok
     return await _forward_request("GET", f"{forecast_api_url}/forecast_methods", headers=headers)
 
 
+@router.get(
+    "/fetch_sample_and_discreteness",
+    response_model=FetchSampleResponse,
+    summary="Получение примера и дискретности временного ряда"
+)
+async def proxy_fetch_sample_and_discreteness(
+        connection_id: int = Query(..., example=4),
+        data_name: str = Query(..., example="Тестовое"),
+        source_table: str = Query(..., example="electrical_consumption_amurskaya_obl"),
+        time_column: str = Query(..., example="datetime"),
+        target_column: str = Query(..., example="vc_fact"),
+        request: Request = None,
+        _=Depends(access_token_validator)
+):
+    """
+    Эндпоинт для получения тестовых данных и дискретности временного ряда.
+
+    Здесь можно получить **discreteness** для эндпоинта /create
+
+    Raises:
+    - **HTTPException 403**: Если пользователь не имеет роли или права
+    - **HTTPException 500**: Если произошла ошибка при сохранении настройки
+    """
+    headers = {"authorization": request.headers["authorization"]}
+    payload = FetchSampleDataRequest(
+        connection_id=connection_id,
+        data_name=data_name,
+        source_table=source_table,
+        time_column=time_column,
+        target_column=target_column,
+    )
+    return await _forward_request(
+        "GET",
+        f"{forecast_api_url}/fetch_sample_and_discreteness",
+        params=payload.dict(),
+        headers=headers
+    )
+
+
+@router.get("/time_intervals", response_model=TimeIntervalsResponse, summary="Список интервалов времени")
+async def get_time_intervals():
+    """
+    Эндпоинт возможных интервалов "minute", "hour", "day", "month"
+
+    Здесь можно получить один из возможных **time_interval** для эндпоинта /create
+
+    Raises:
+    - **HTTPException 403**: Если пользователь не имеет роли или права
+    - **HTTPException 500**: Если произошла ошибка при сохранении настройки
+    """
+    try:
+        data = {"time_intervals": ["minute", "hour", "day", "month"]}
+        return TimeIntervalsResponse(**data)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Ошибка при формировании словаря: {e}")
+
+
 @router.post("/create", response_model=ForecastConfigResponse, summary="Создание настройки прогнозирования")
 async def proxy_create_forecast_config(
-        payload: ForecastConfigRequest = Body(...),
+        payload: ForecastConfigRequest = Body(
+            ...,
+            example={
+                "connection_id": 3,
+                "data_name": "Тестовое",
+                "source_table": "electrical_consumption_amurskaya_obl",
+                "time_column": "datetime",
+                "target_column": "vc_fact",
+                "horizon_count": 36,
+                "time_interval": "hour",
+                "discreteness": 600,
+                "target_db": "self_host",
+                "methods": [
+                    "XGBoost",
+                    "LSTM"
+                ]
+            }
+        ),
         request: Request = None,
         _=Depends(access_token_validator)
 ):
