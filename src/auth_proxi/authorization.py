@@ -10,6 +10,9 @@ auth_service_url = env.str("AUTH_SERVICE", "LOCAL")
 
 router = APIRouter()
 
+timeout = httpx.Timeout(connect=15.0, read=90.0, write=15.0, pool=15.0)
+
+
 @router.post(
     "/login",
     response_model=AuthResponse,
@@ -59,7 +62,7 @@ async def proxy_auth_user(auth_data: AuthRequest = Body(..., example={"login": "
     - **HTTPException 401**: При неверных учётных данных
     - **HTTPException 401**: Если пользователь заблокирован, удалён или неактивен
     """
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(timeout=timeout) as client:
         response = await client.post(f"{auth_service_url}/api/v1/auth/login", json=auth_data.dict())
         if response.status_code != 200:
             raise HTTPException(status_code=response.status_code, detail=response.text)
@@ -94,7 +97,7 @@ async def proxy_logout_user(logout_data: LogoutRequest = Body(..., example={"ref
     Raises:
     - **HTTPException 401**: При невалидном токене
     """
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(timeout=timeout) as client:
         response = await client.post(f"{auth_service_url}/api/v1/auth/logout", json=logout_data.dict())
         if response.status_code != 200:
             raise HTTPException(status_code=response.status_code, detail=response.text)
@@ -136,7 +139,7 @@ async def proxy_refresh_tokens(
     - **HTTPException 401**: Если refresh-токен недействителен, истек или отозван
     - **HTTPException 500**: Если произошла ошибка при работе с базой данных или в сервисе
     """
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(timeout=timeout) as client:
         response = await client.post(f"{auth_service_url}/api/v1/auth/refresh", json=request.dict())
         if response.status_code != 200:
             raise HTTPException(status_code=response.status_code, detail=response.text)
