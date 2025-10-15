@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Request, Depends, Query
-from src.schemas import GenerateDateResponse, MetricsResponse
+from src.schemas import GenerateDateResponse, MetricsResponse, ItemResponse
 from src.security.check_token import access_token_validator
 from environs import Env
 from src.schedule_forecast_proxi.proxi import _forward_request
@@ -80,3 +80,12 @@ async def proxy_get_metrics_by_date(
         params=params,
         headers=headers
     )
+
+
+@router.get("/get_metrics", response_model=list[ItemResponse], summary="Возвращает список элементов с полями title, value, description")
+async def get_items(_=Depends(access_token_validator)):
+    data = [
+        {"title": "MAE (Mean Absolute Error)", "value": "500", "description": "Показывает, насколько в среднем прогноз отклоняется от реальных данных в тех же единицах измерения"},
+        {"title": "MAPE (Mean Absolute Percentage Error)", "value": "8 %", "description": "Показывает, насколько в среднем прогноз отклонился в процентном выражении относительно реальных значений"},
+    ]
+    return data

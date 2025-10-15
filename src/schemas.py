@@ -385,3 +385,9 @@ class ForecastConfigRequest(BaseModel):
 class ForecastConfigResponse(BaseModel):
     success: bool
     message: str
+
+
+class ItemResponse(BaseModel):
+    title: str
+    value: str
+    description: str
